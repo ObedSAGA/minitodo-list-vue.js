@@ -1,58 +1,102 @@
 <template>
   <div class="hello">
     <h1>{{ msg }}</h1>
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br>
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
-    </p>
-    <h3>Installed CLI Plugins</h3>
-    <ul>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank" rel="noopener">babel</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint" target="_blank" rel="noopener">eslint</a></li>
-    </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank" rel="noopener">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
-      <li><a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a></li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li><a href="https://router.vuejs.org" target="_blank" rel="noopener">vue-router</a></li>
-      <li><a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-devtools#vue-devtools" target="_blank" rel="noopener">vue-devtools</a></li>
-      <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
-    </ul>
+  </div>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-12 col-md-6 offset-md-3">
+        <div class="row my-3" v-for="(todo, index) in todos" v-bind:key="todo.id">
+          <div class="col-md-8">
+            <div class="card my-3">
+              <div class="card-body">
+                <div class="card-title" :class="{ done: todo.done }">
+                  {{ todo.content }}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4 d-flex align-items-center">
+            <button @click="toggleDown(todo)" class="btn btn-success">
+              Hecho
+            </button>
+
+
+            <button @click="removeTodo(index)" class="btn ">Eliminar</button>
+
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-body">
+            <div class="card-title">
+              <p>{{ newTodo }}</p>
+            </div>
+          </div>
+        </div>
+
+        <form @submit.prevent="addNewTodo">
+          <div class="input-group">
+            <input
+              v-model="newTodo"
+              type="text"
+              name="newTodo"
+              class="form-control"
+              placeholder="Insertar tarea"
+            />
+          </div>
+          <div class="input-group-append" id="button-addon4">
+            <button class="btn btn-dark my-3" type="submit">Insertar</button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
+import { ref } from "vue";
+
 export default {
-  name: 'HelloWorld',
+  name: "HelloWorld",
   props: {
-    msg: String
-  }
-}
+    msg: String,
+  },
+
+  setup() {
+    const newTodo = ref("");
+    const todos = ref([]);
+
+    function addNewTodo() {
+      todos.value.push({
+        id: Date.now(),
+        done: false,
+        content: newTodo.value,
+      });
+      newTodo.value = "";
+    }
+
+    function toggleDown(todo) {
+      todo.done = !todo.done;
+    }
+
+    function removeTodo(index) {
+      todos.value.splice(index, 1);
+    }
+
+    return {
+      newTodo,
+      todos,
+      addNewTodo,
+      toggleDown,
+      removeTodo
+    };
+  },
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h3 {
-  margin: 40px 0 0;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
+.done {
+  text-decoration: line-through;
 }
 </style>
